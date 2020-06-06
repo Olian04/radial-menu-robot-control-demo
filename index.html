@@ -1,262 +1,268 @@
 <body>
-<div id="radial-menu"></div>
-<img id="robot" src="https://cdn3.f-cdn.com/contestentries/193290/2187233/55296a7248f10_thumb900.jpg">
+	<style>
+	#robot {
+	  position: absolute;
+	  width: 100px;
+	}
+	</style>
+	<div id="radial-menu"></div>
+	<img id="robot" src="https://cdn3.f-cdn.com/contestentries/193290/2187233/55296a7248f10_thumb900.jpg">
 
-<script src="https://cdn.jsdelivr.net/npm/brynja/cdn/brynja.js"></script>
-<script>
-// Radial context menu
-const { Renderer } = brynja;
+	<script src="https://cdn.jsdelivr.net/npm/brynja/cdn/brynja.js"></script>
+	<script>
+	// Radial context menu
+	const { Renderer } = brynja;
 
-const menu = Renderer({
-  rootElement: document.getElementById('radial-menu')
-});
+	const menu = Renderer({
+	  rootElement: document.getElementById('radial-menu')
+	});
 
-const cat = {
-	el: document.querySelector('#robot'),
-  position: {
-  	x: 100, y: 100,
-  },
-  velocity: 1,
-  angle: 45,
-  angleVelocity: 0,
-}
+	const cat = {
+		el: document.querySelector('#robot'),
+	  position: {
+		x: 100, y: 100,
+	  },
+	  velocity: 1,
+	  angle: 45,
+	  angleVelocity: 0,
+	}
 
-const degToRad = (degrees) => degrees * (Math.PI/180);
+	const degToRad = (degrees) => degrees * (Math.PI/180);
 
-const updateCat = () => {
-	cat.angle += cat.angleVelocity;
-	cat.position.x += cat.velocity * Math.sin(degToRad(cat.angle));
-	cat.position.y += cat.velocity * Math.cos(degToRad(cat.angle));
-  cat.el.style.transform = `rotate(${-cat.angle}deg)`;
-  cat.el.style.top = `${cat.position.y}px`;
-  cat.el.style.left = `${cat.position.x}px`;
-  requestAnimationFrame(updateCat);
-}
-requestAnimationFrame(updateCat);
+	const updateCat = () => {
+		cat.angle += cat.angleVelocity;
+		cat.position.x += cat.velocity * Math.sin(degToRad(cat.angle));
+		cat.position.y += cat.velocity * Math.cos(degToRad(cat.angle));
+	  cat.el.style.transform = `rotate(${-cat.angle}deg)`;
+	  cat.el.style.top = `${cat.position.y}px`;
+	  cat.el.style.left = `${cat.position.x}px`;
+	  requestAnimationFrame(updateCat);
+	}
+	requestAnimationFrame(updateCat);
 
-const sqrt2 = Math.sqrt(2);
-const size = 150;
-const state = {
-	x: 0,
-  y: 0,
-  hidden: false,
-  size: size,
-  button: {
-  	size: size * 0.5 * sqrt2,
-    borderSide: '15%',
-    borderInner: '15%',
-    borderWidth: 4,
-  }
-}
+	const sqrt2 = Math.sqrt(2);
+	const size = 150;
+	const state = {
+		x: 0,
+	  y: 0,
+	  hidden: false,
+	  size: size,
+	  button: {
+		size: size * 0.5 * sqrt2,
+	    borderSide: '15%',
+	    borderInner: '15%',
+	    borderWidth: 4,
+	  }
+	}
 
-const buttonStyle = _=>_
-	.style({
-    position: 'absolute',
-    zIndex: 1000,
-    height: `${state.button.size}px`,
-    width: `${state.button.size}px`,
-    borderRadius: state.button.borderSide,
-    background: '#594859',
-    boxSizing: 'border-box',
-    border: `${state.button.borderWidth}px solid #B7644C`,
-    color: '#B7644C',
-    ':hover': {
-      borderColor: '#A35444',
-      background: '#524252',
-      color: '#A35444'
-    },
-    '::before': {
-      content: '" "',
-      position: 'absolute',
-      borderRadius: state.button.borderSide,
-      zIndex: -1,
-      top: '0px',
-      left: '0px',
-      right: '0px',
-      bottom: '0px',
-      border: '2px solid rgba(0,0,0,0.2)',
-    },
-    '::after': {
-      content: '" "',
-      position: 'absolute',
-      borderRadius: state.button.borderSide,
-      zIndex: -1,
-      top: `-${state.button.borderWidth}px`,
-      left: `-${state.button.borderWidth}px`,
-      right: `-${state.button.borderWidth}px`,
-      bottom: `-${state.button.borderWidth}px`,
-      border: '2px solid rgba(0,0,0,0.2)',
-    }
-  })
-const renderMenu = () => {
-	menu.render(_=>_
-    .style({
-   		display: state.hidden ? 'none' : 'block',
-      left: `${state.x - state.size*0.5}px`,
-      top: `${state.y - state.size*0.5}px`,
-    })
-  	.style({
-    	position: 'absolute',
-      width: `${state.size}px`,
-      height: `${state.size}px`,
-      padding: 0,
-      margin: 0,
-    	//clipPath: `circle(${state.buttonSize}px at center)`,
-    })
-    .child('div', _=>_
-    	.do(buttonStyle)
-    	.style({
-        left: 0,
-        top: `${(state.size - state.button.size) * 0.5}px`,
-        transform: `translate(${-state.button.size*0.5 - 1}px, 1px) rotate(45deg)`,
-        borderBottomLeftRadius: '100%',
-        borderTopRightRadius: state.button.borderInner,
-        '::before': {
-          content: '" "',
-          borderBottomLeftRadius: '100%',
-        	borderTopRightRadius: state.button.borderInner,
-        },
-        '::after': {
-          content: '" "',
-          borderBottomLeftRadius: '100%',
-       	 	borderTopRightRadius: state.button.borderInner,
-        }
-      })
-      .on('mouseup', () => {
-     		cat.angleVelocity = 1;
-      })
-      .child('div', _=>_
-      	.style({
-        	transform: `rotate(-45deg) translate(10px, ${state.button.size*0.25}px)`,
-          fontWeight: '900'
-        })
-      	.text('LEFT')
-      )
-    )
-    .child('div', _=>_
-    	.do(buttonStyle)
-    	.style({
-        top: 0,
-        left: `${(state.size - state.button.size) * 0.5}px`,
-        transform: `translate(0, ${-state.button.size*0.5 - 1}px) rotate(45deg)`,
-        borderTopLeftRadius: '100%',
-        borderBottomRightRadius: state.button.borderInner,
-				'::before': {
-          content: '" "',
-          borderTopLeftRadius: '100%',
-        	borderBottomRightRadius: state.button.borderInner,
-        },
-        '::after': {
-          content: '" "',
-          borderTopLeftRadius: '100%',
-        	borderBottomRightRadius: state.button.borderInner,
-        }
-      })
-      .on('mouseup', () => {
-      	cat.angleVelocity = 0;
-      })
-      .child('div', _=>_
-      	.style({
-        	transform: `rotate(-45deg) translate(-15px, ${state.button.size*0.25}px)`,
-          fontWeight: '900'
-        })
-      	.text('FORWARD')
-      )
-    )
-    .child('div', _=>_
-    	.do(buttonStyle)
-    	.style({
-        right: 0,
-        top: `${(state.size - state.button.size) * 0.5}px`,
-        transform: `translate(${state.button.size*0.5 +2}px) rotate(45deg)`,
-        borderTopRightRadius: '100%',
-        borderBottomLeftRadius: state.button.borderInner,
-        '::before': {
-          content: '" "',
-          borderTopRightRadius: '100%',
-          borderBottomLeftRadius: state.button.borderInner,
-        },
-        '::after': {
-          content: '" "',
-          borderTopRightRadius: '100%',
-       		borderBottomLeftRadius: state.button.borderInner,
-        }
-      })
-      .on('mouseup', () => {
-     		cat.angleVelocity = -1;
-      })
-      .child('div', _=>_
-      	.style({
-        	transform: `rotate(-45deg) translate(-15px, ${state.button.size*0.25}px)`,
-          fontWeight: '900'
-        })
-      	.text('RIGHT')
-      )
-    )
-    .child('div', _=>_
-    	.do(buttonStyle)
-    	.style({
-        bottom: 0,
-        left: `${(state.size - state.button.size) * 0.5}px`,
-        transform: `translate(1px, ${state.button.size*0.5 +2}px) rotate(45deg)`,
-        borderBottomRightRadius: '100%',
-        borderTopLeftRadius: state.button.borderInner,
-        '::before': {
-          content: '" "',
-          borderBottomRightRadius: '100%',
-          borderTopLeftRadius: state.button.borderInner,
-        },
-        '::after': {
-          content: '" "',
-          borderBottomRightRadius: '100%',
-          borderTopLeftRadius: state.button.borderInner,
-        }
-      })
-      .on('mouseup', () => {
-      	cat.position.x = 100;
-      	cat.position.y = 100;
-        cat.angle = 45;
-        cat.angleVelocity = 0;
-      })
-      .child('div', _=>_
-      	.style({
-        	transform: `rotate(-45deg) translate(-5px, ${state.button.size*0.25}px)`,
-          fontWeight: '900'
-        })
-      	.text('RESET')
-      )
-    )
-    .child('div', _=>_
-    	// Blocking circle at the center, prevents accidental menu selection
-    	.style({
-      	position: 'absolute',
-        left: `${(state.size - 15) * 0.5}px`,
-        top: `${(state.size - 15) * 0.5}px`,
-        width: '15px',
-        height: '15px',
-        zIndex: 10001,
-        borderRadius: '50%'
-      })
-    )
-  );
-};
+	const buttonStyle = _=>_
+		.style({
+	    position: 'absolute',
+	    zIndex: 1000,
+	    height: `${state.button.size}px`,
+	    width: `${state.button.size}px`,
+	    borderRadius: state.button.borderSide,
+	    background: '#594859',
+	    boxSizing: 'border-box',
+	    border: `${state.button.borderWidth}px solid #B7644C`,
+	    color: '#B7644C',
+	    ':hover': {
+	      borderColor: '#A35444',
+	      background: '#524252',
+	      color: '#A35444'
+	    },
+	    '::before': {
+	      content: '" "',
+	      position: 'absolute',
+	      borderRadius: state.button.borderSide,
+	      zIndex: -1,
+	      top: '0px',
+	      left: '0px',
+	      right: '0px',
+	      bottom: '0px',
+	      border: '2px solid rgba(0,0,0,0.2)',
+	    },
+	    '::after': {
+	      content: '" "',
+	      position: 'absolute',
+	      borderRadius: state.button.borderSide,
+	      zIndex: -1,
+	      top: `-${state.button.borderWidth}px`,
+	      left: `-${state.button.borderWidth}px`,
+	      right: `-${state.button.borderWidth}px`,
+	      bottom: `-${state.button.borderWidth}px`,
+	      border: '2px solid rgba(0,0,0,0.2)',
+	    }
+	  })
+	const renderMenu = () => {
+		menu.render(_=>_
+	    .style({
+			display: state.hidden ? 'none' : 'block',
+	      left: `${state.x - state.size*0.5}px`,
+	      top: `${state.y - state.size*0.5}px`,
+	    })
+		.style({
+		position: 'absolute',
+	      width: `${state.size}px`,
+	      height: `${state.size}px`,
+	      padding: 0,
+	      margin: 0,
+		//clipPath: `circle(${state.buttonSize}px at center)`,
+	    })
+	    .child('div', _=>_
+		.do(buttonStyle)
+		.style({
+		left: 0,
+		top: `${(state.size - state.button.size) * 0.5}px`,
+		transform: `translate(${-state.button.size*0.5 - 1}px, 1px) rotate(45deg)`,
+		borderBottomLeftRadius: '100%',
+		borderTopRightRadius: state.button.borderInner,
+		'::before': {
+		  content: '" "',
+		  borderBottomLeftRadius: '100%',
+			borderTopRightRadius: state.button.borderInner,
+		},
+		'::after': {
+		  content: '" "',
+		  borderBottomLeftRadius: '100%',
+			borderTopRightRadius: state.button.borderInner,
+		}
+	      })
+	      .on('mouseup', () => {
+			cat.angleVelocity = 1;
+	      })
+	      .child('div', _=>_
+		.style({
+			transform: `rotate(-45deg) translate(10px, ${state.button.size*0.25}px)`,
+		  fontWeight: '900'
+		})
+		.text('LEFT')
+	      )
+	    )
+	    .child('div', _=>_
+		.do(buttonStyle)
+		.style({
+		top: 0,
+		left: `${(state.size - state.button.size) * 0.5}px`,
+		transform: `translate(0, ${-state.button.size*0.5 - 1}px) rotate(45deg)`,
+		borderTopLeftRadius: '100%',
+		borderBottomRightRadius: state.button.borderInner,
+					'::before': {
+		  content: '" "',
+		  borderTopLeftRadius: '100%',
+			borderBottomRightRadius: state.button.borderInner,
+		},
+		'::after': {
+		  content: '" "',
+		  borderTopLeftRadius: '100%',
+			borderBottomRightRadius: state.button.borderInner,
+		}
+	      })
+	      .on('mouseup', () => {
+		cat.angleVelocity = 0;
+	      })
+	      .child('div', _=>_
+		.style({
+			transform: `rotate(-45deg) translate(-15px, ${state.button.size*0.25}px)`,
+		  fontWeight: '900'
+		})
+		.text('FORWARD')
+	      )
+	    )
+	    .child('div', _=>_
+		.do(buttonStyle)
+		.style({
+		right: 0,
+		top: `${(state.size - state.button.size) * 0.5}px`,
+		transform: `translate(${state.button.size*0.5 +2}px) rotate(45deg)`,
+		borderTopRightRadius: '100%',
+		borderBottomLeftRadius: state.button.borderInner,
+		'::before': {
+		  content: '" "',
+		  borderTopRightRadius: '100%',
+		  borderBottomLeftRadius: state.button.borderInner,
+		},
+		'::after': {
+		  content: '" "',
+		  borderTopRightRadius: '100%',
+			borderBottomLeftRadius: state.button.borderInner,
+		}
+	      })
+	      .on('mouseup', () => {
+			cat.angleVelocity = -1;
+	      })
+	      .child('div', _=>_
+		.style({
+			transform: `rotate(-45deg) translate(-15px, ${state.button.size*0.25}px)`,
+		  fontWeight: '900'
+		})
+		.text('RIGHT')
+	      )
+	    )
+	    .child('div', _=>_
+		.do(buttonStyle)
+		.style({
+		bottom: 0,
+		left: `${(state.size - state.button.size) * 0.5}px`,
+		transform: `translate(1px, ${state.button.size*0.5 +2}px) rotate(45deg)`,
+		borderBottomRightRadius: '100%',
+		borderTopLeftRadius: state.button.borderInner,
+		'::before': {
+		  content: '" "',
+		  borderBottomRightRadius: '100%',
+		  borderTopLeftRadius: state.button.borderInner,
+		},
+		'::after': {
+		  content: '" "',
+		  borderBottomRightRadius: '100%',
+		  borderTopLeftRadius: state.button.borderInner,
+		}
+	      })
+	      .on('mouseup', () => {
+		cat.position.x = 100;
+		cat.position.y = 100;
+		cat.angle = 45;
+		cat.angleVelocity = 0;
+	      })
+	      .child('div', _=>_
+		.style({
+			transform: `rotate(-45deg) translate(-5px, ${state.button.size*0.25}px)`,
+		  fontWeight: '900'
+		})
+		.text('RESET')
+	      )
+	    )
+	    .child('div', _=>_
+		// Blocking circle at the center, prevents accidental menu selection
+		.style({
+		position: 'absolute',
+		left: `${(state.size - 15) * 0.5}px`,
+		top: `${(state.size - 15) * 0.5}px`,
+		width: '15px',
+		height: '15px',
+		zIndex: 10001,
+		borderRadius: '50%'
+	      })
+	    )
+	  );
+	};
 
-const RMB = 3;
-document.addEventListener('mousedown', (ev) => {
-	if (ev.which !== RMB) return;
-  state.hidden = false;
-  state.x = ev.pageX;
-  state.y = ev.pageY;
-  renderMenu();
-});
-document.addEventListener('mouseup', (ev) => {
-	if (ev.which !== RMB) return;
-  state.hidden = true;
-  renderMenu();
-});
+	const RMB = 3;
+	document.addEventListener('mousedown', (ev) => {
+		if (ev.which !== RMB) return;
+	  state.hidden = false;
+	  state.x = ev.pageX;
+	  state.y = ev.pageY;
+	  renderMenu();
+	});
+	document.addEventListener('mouseup', (ev) => {
+		if (ev.which !== RMB) return;
+	  state.hidden = true;
+	  renderMenu();
+	});
 
-document.addEventListener('contextmenu', (ev) => {
-  ev.preventDefault();
-});
-</script>
+	document.addEventListener('contextmenu', (ev) => {
+	  ev.preventDefault();
+	});
+	</script>
 </body>
